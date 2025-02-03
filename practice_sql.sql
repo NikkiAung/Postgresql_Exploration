@@ -65,3 +65,48 @@ SELECT district_name
 FROM district
 ORDER BY district_population DESC
 LIMIT 5
+
+SELECT 
+EXTRACT (HOUR from visit_date_time) AS visit_hour,
+COUNT(*) as total_visitor
+FROM web_visitor
+GROUP BY visit_hour
+ORDER BY total_visitor DESC
+
+SELECT 
+EXTRACT (HOUR from visit_date_time) AS visit_hour,
+COUNT(*) as total_visitor
+FROM web_visitor
+GROUP BY visit_hour
+ORDER BY total_visitor DESC
+
+SELECT 
+name, COALESCE(price,0) AS corrected_price
+FROM listings
+ORDER BY corrected_price DESC
+LIMIT 10
+
+-- Retrieves specific details of listings
+-- including name, district_name, room_type,
+-- minimum_nights, number_of_reviews, price
+-- in the 'Bang Rak' district.
+SELECT 
+d.district_name,
+l.name,
+l.room_type,
+l.minimum_nights,
+l.number_of_reviews,
+l.price
+FROM listings AS l INNER JOIN district AS d ON l.district_id = d.id
+WHERE d.district_name = 'Bang Rak';
+
+-- Queries the top 5 districts with the most listings
+-- and provides information about each district.
+SELECT
+d.district_name,
+COUNT(*) AS total_listings
+FROM district AS d
+INNER JOIN listings AS l ON l.district_id = d.id
+GROUP BY d.id
+ORDER BY total_listings DESC
+LIMIT 5;
