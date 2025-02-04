@@ -110,3 +110,87 @@ INNER JOIN listings AS l ON l.district_id = d.id
 GROUP BY d.id
 ORDER BY total_listings DESC
 LIMIT 5;
+
+-- Retrieves the total number of hosts and reviews for each district,
+-- including districts with listings, hosts, or reviews.
+
+SELECT
+d.district_name,
+COUNT(DISTINCT h.id) AS total_hosts,
+COUNT(r.id) AS total_reviews
+FROM district AS d
+INNER JOIN listings AS l ON d.id = l.district_id
+LEFT JOIN host AS h ON h.id = l.host_id
+LEFT JOIN reviews AS r ON r.listing_id = l.id
+GROUP BY d.id;
+
+
+SELECT customer_name, 'customer' AS name FROM customer
+UNION
+SELECT host_name, 'host' FROM host ORDER BY 2
+
+
+SELECT *
+FROM listings
+WHERE minimum_nights < (
+	SELECT AVG(minimum_nights)
+	FROM listings
+)
+
+-- Retrieves all districts that have attractions
+-- with a popularity score of 4 or higher
+
+SELECT *
+FROM district
+WHERE id in (
+	SELECT district_id
+	FROM district_attraction
+	WHERE popularity_score >= 4
+)
+
+-- Retrieves all listings with a price below
+-- the average price of all listings.
+SELECT *
+FROM listings
+WHERE price < (
+	SELECT
+	AVG(price)
+	FROM listings
+)
+
+
+-- Find the popularity score of attractions in each district
+-- using a correlated subquery
+SELECT 
+d.district_name,
+(
+	SELECT da.popularity_score
+	FROM district_attraction AS da
+	WHERE da.id = d.id
+)
+FROM district AS d;
+
+-- Calculate the average price of listings in each district
+-- rounded to 2 decimal places using a correlated subquery
+SELECT
+d.district_name,
+(
+	SELECT 
+	ROUND(AVG(price),2)
+	FROM listings as l
+	WHERE l.district_id = d.id
+)
+FROM district as d
+
+
+-- Find the number of listings of room type "Hotel room"
+-- in each district using a correlated subquery
+SELECT 
+d.district_name,
+(
+	SELECT
+	COUNT(*) 
+	FROM listings AS l
+	WHERE l.district_id = d.id AND l.room_type = 'Hotel room'
+) AS hotel_count
+FROM district AS d 
