@@ -100,3 +100,49 @@ VALUES
 	5
 )
 
+
+SELECT * FROM real_estate_agents
+
+UPDATE real_estate_agents
+SET agent_name = 'Aung Gyi',
+phone_number = '627-090-8908',
+years_experience = 10,
+comission_rate = 3.29,
+status = 'active'
+WHERE id = 5 
+
+UPDATE real_estate_agents
+SET comission_rate = 6.5
+WHERE years_experience > 7
+
+ALTER TABLE real_estate_agents
+ADD COLUMN license_number VARCHAR(20)
+
+UPDATE real_estate_agents
+SET license_number = 'license_number_NA';
+
+-- Select Hosts with More than 10 Listings:
+SELECT 
+h.host_name, h.id, COUNT(l.id)
+FROM host AS h
+INNER JOIN listings AS l ON h.id = l.host_id
+GROUP BY h.id
+HAVING COUNT(l.id) > 10
+
+-- Can you write a SQL query that selects hosts with more than 10 listings, displaying their IDs,
+-- names, and total number of listings, ordered by the total number of listings in ascending order?
+
+-- The query should:
+-- * Join the Host and Listings tables to associate listings with their respective hosts.
+-- * Group the results by host ID.
+-- * Use the HAVING clause to filter hosts with more than 10 listings.
+-- * Order the results by the total number of listings in ascending order.
+
+SELECT
+h.id, h.host_name, COUNT(l.id) AS total_listings
+FROM host AS h
+INNER JOIN listings AS l on h.id = l.host_id
+GROUP BY h.id
+HAVING COUNT(l.id) > 10
+ORDER BY total_listings ASC
+
