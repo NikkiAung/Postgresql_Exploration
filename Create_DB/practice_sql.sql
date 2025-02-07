@@ -146,3 +146,30 @@ GROUP BY h.id
 HAVING COUNT(l.id) > 10
 ORDER BY total_listings ASC
 
+-- Calculate Average Listing Prices By District
+SELECT
+d.district_name,
+ROUND(AVG(l.price),2) AS average_price
+FROM listings AS l
+INNER JOIN district AS d ON d.id = l.district_id
+GROUP BY d.district_name
+ORDER BY average_price ASC
+LIMIT 5;
+
+
+-- Can you provide a query that calculates the total number
+-- of new rental units listed each year?
+
+SELECT
+EXTRACT('Y' FROM r.min_date) AS min_date,
+ROUND(COUNT(*)*1.30) AS listing_count
+FROM(
+	SELECT 
+	l.id,
+	MIN(r.date) AS min_date
+	FROM listings AS l
+	INNER JOIN reviews AS r ON l.id = r.listing_id
+	GROUP BY l.id
+) AS r
+GROUP BY EXTRACT('Y' FROM r.min_date)
+ORDER BY min_date
